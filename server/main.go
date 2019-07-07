@@ -35,14 +35,8 @@ func handler(w http.ResponseWriter, req *http.Request) {
 
 	w.Header().Set("WWW-Authenticate", `Basic realm="chat"`)
 
-	if !ok {
+	if !ok || pwd != "secret" {
 		http.Error(w, "Not authorized", 401)
-		return
-	}
-
-	if pwd != "secret" {
-		http.Error(w, "Not authorized", 401)
-		log.Printf("user %s: invalid password\n", user)
 		return
 	}
 
@@ -53,8 +47,6 @@ func handler(w http.ResponseWriter, req *http.Request) {
 	}
 
 	client := newClient(user, h, conn)
-
-	h.register <- client
 
 	go client.listen()
 }

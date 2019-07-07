@@ -31,6 +31,7 @@ func main() {
 	conn, _, err := websocket.DefaultDialer.Dial(u.String(), h)
 	if err != nil {
 		log.Fatalln("dial:", err)
+		return
 	}
 	defer conn.Close()
 
@@ -74,17 +75,15 @@ func main() {
 		}
 	}()
 
-	for {
-		select {
-		case <-interrupt:
-			conn.Close()
-			return
-		case <-readCh:
-			conn.Close()
-			return
-		case <-writeCh:
-			conn.Close()
-			return
-		}
+	select {
+	case <-interrupt:
+		conn.Close()
+		return
+	case <-readCh:
+		conn.Close()
+		return
+	case <-writeCh:
+		conn.Close()
+		return
 	}
 }

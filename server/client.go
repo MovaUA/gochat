@@ -13,31 +13,16 @@ type client struct {
 }
 
 func newClient(name string, hub *hub, conn *websocket.Conn) *client {
-	if name == "" {
-		panic("newClient: name is empty")
-	}
-	if hub == nil {
-		panic("newClient: hub is nil")
-	}
-	if conn == nil {
-		panic("newClient: conn is nil")
-	}
-	return &client{name, hub, conn}
+	client := &client{name, hub, conn}
+	hub.register <- client
+	return client
 }
 
 func (c *client) send(message []byte) error {
-	if &c == nil {
-		panic("client.send(): client is nil")
-	}
-
 	return c.conn.WriteMessage(websocket.TextMessage, message)
 }
 
 func (c *client) listen() {
-	if &c == nil {
-		panic("client.listen(): client is nil")
-	}
-
 	for {
 		messageType, message, err := c.conn.ReadMessage()
 
@@ -56,9 +41,5 @@ func (c *client) listen() {
 }
 
 func (c *client) close() error {
-	if &c == nil {
-		panic("client.close(): client is nil")
-	}
-
 	return c.conn.Close()
 }

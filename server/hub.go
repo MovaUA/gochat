@@ -43,6 +43,7 @@ func (h *hub) run() {
 			}
 		case clientMessage := <-h.broadcast:
 			message := fmt.Sprintf("%s says: %s\n", clientMessage.client.name, string(clientMessage.message))
+			log.Print(message)
 			for client := range h.clients {
 				err := client.send([]byte(message))
 				if err != nil {
